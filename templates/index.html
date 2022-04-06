@@ -1,0 +1,77 @@
+{% extends 'bootstrap/base.html' %}
+{% include 'base.html' %}
+{% block head %}
+{{ fontawesome_html() }} <!--font awesome icons-->
+{% block scripts %}
+<!--date picker jquery-->
+{{ super() }}
+{{ datepicker.loader(theme="cupertino") }} {# to load jQuery-ui #}
+{{ datepicker.picker(id=".dp") }}
+{% endblock %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container justify-content-center text-center py-3 my-3">
+    <form action="" method="post">
+        <div class="form-group">
+            <!--if updating existing tasks-->
+            {% if update_task %}
+            <div class="input-fields">
+                <span class="site_title">Todoly</span>
+                <input type="text" name="dueDate" id="dueDate" value="{{update_task.due_date }}" class="form-control dp"
+                    required/><br>
+                <input type="text" name="task" id="task" value="{{ update_task.title }}" class="form-control-sm"
+                    required data-readonly><br>
+                <textarea type="text" name="task_description" id="task_description"
+                    class="form-control-sm">{{update_task.task_description }}</textarea>
+            </div><br>
+            <input type="submit" value="Done" class="btn btn-info">
+            <!--if adding new task-->
+            {% else %}
+            <div class="input-fields">
+                <span class="site_title">Todoly</span>
+                <input type="text" name="dueDate" id="dueDate" placeholder="Due Date YYYY-MM-DD" class="form-control dp"
+                    required/><br>
+                <input type="text" name="task" id="task" placeholder="Todo Title" required><br>
+                <textarea type="text" name="task_description" id="task_description"
+                    placeholder="What do you want to do?" class="form-control-sm"></textarea>
+            </div><br>
+            <input type="submit" value="Done" class="btn btn-primary" class="form-control-sm">
+            {% endif %}
+
+        </div>
+
+
+    </form>
+</div>
+<div class="container">
+    <!--if there are existing task-->
+
+    {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-box">
+                <div class="task_title">{{ task.title }}</div>
+                <div class="task-description">
+                    {{ task.task_description }}<br>
+                </div>
+                    {% if update_task %}
+                    <!--removed edit delete button from other existing tasks; if you want you can add them back here-->
+                    {% else %}
+                    <div class="task_duedate">
+                        <span><span class="fas fa-calendar">&nbsp;&nbsp;</span>{{ task.due_date.date() }}</span>
+                    </div>
+                    <div class="task-buttons">
+                        <!--edit delete button for existing tasks, using font awesome icons-->
+                        <a href="update/{{ task.id }}" class="btn btn-update"><span class="fas fa-pen"></span></span></a>
+                        <a href="delete/{{ task.id }}" class="btn btn-delete"><span class="fas fa-trash"></span></span></a>
+                    </div>
+                    {% endif %}
+            </div>
+            {% endfor %}
+
+    {% else %}
+    <p class="text-center">There are no todo items !!</p>
+    {% endif %}
+</div>
+{% endblock %}
